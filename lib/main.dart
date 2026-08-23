@@ -613,6 +613,8 @@ class _JatekKepernyoState
 
   List<int> valaszok = [];
 
+  final Set<String> hasznaltSzorzok = {};
+
   // ----------------------------------------------------------
   // PONTSZÁM
   // ----------------------------------------------------------
@@ -650,49 +652,35 @@ class _JatekKepernyoState
   // ==========================================================
 
   void _ujKerdes() {
-    // --------------------------------------------------------
-    // ELSŐ SZÁM
-    // --------------------------------------------------------
+    int ujSzam1;
+    int ujSzam2;
+    String kulcs;
 
-    if (widget.tabla == null) {
-      // Vegyes mód: 2–10
-      szam1 = _random.nextInt(9) + 2;
-    } else {
-      // Kiválasztott szorzótábla
-      szam1 = widget.tabla!;
-    }
+    do {
+      if (widget.tabla == null) {
+        ujSzam1 = _random.nextInt(9) + 2;
+      } else {
+        ujSzam1 = widget.tabla!;
+      }
 
-    // --------------------------------------------------------
-    // MÁSODIK SZÁM
-    // --------------------------------------------------------
+      // 1–10 között választunk, így minden kiválasztott
+      // szorzótáblában pontosan 10 különböző feladat lehet.
+      ujSzam2 = _random.nextInt(10) + 1;
 
-    szam2 = _random.nextInt(9) + 2;
+      // Vegyes módban a 7×8 és 8×7 ugyanannak számít.
+      final kisebb = min(ujSzam1, ujSzam2);
+      final nagyobb = max(ujSzam1, ujSzam2);
+      kulcs = '$kisebb×$nagyobb';
+    } while (hasznaltSzorzok.contains(kulcs));
 
-    // --------------------------------------------------------
-    // HELYES VÁLASZ
-    // --------------------------------------------------------
-
+    hasznaltSzorzok.add(kulcs);
+    szam1 = ujSzam1;
+    szam2 = ujSzam2;
     helyesValasz = szam1 * szam2;
-
-    // --------------------------------------------------------
-    // HIÁNYZÓ SZÁM HELYE
-    // --------------------------------------------------------
-
     hianyzoElso = _random.nextBool();
-
-    // --------------------------------------------------------
-    // ÁLLAPOT VISSZAÁLLÍTÁSA
-    // --------------------------------------------------------
-
     _controller.clear();
-
     valaszolt = false;
-
     helyes = false;
-
-    // --------------------------------------------------------
-    // VÁLASZLEHETŐSÉGEK
-    // --------------------------------------------------------
 
     if (widget.mod != JatekMod.beiras) {
       _keszitValaszokat();
@@ -769,7 +757,7 @@ class _JatekKepernyoState
           _random.nextInt(7) -
           3;
 
-      if (rossz < 2) {
+      if (rossz < 1) {
         rossz = 2;
       }
 
@@ -1599,7 +1587,7 @@ class EredmenyKepernyo extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (_) => const Fomenu(),
-      ),
+      ),flutter clean
       (route) => false,
     );
   }
