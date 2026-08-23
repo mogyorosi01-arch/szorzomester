@@ -1587,7 +1587,7 @@ class EredmenyKepernyo extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (_) => const Fomenu(),
-      ),flutter clean
+      ),
       (route) => false,
     );
   }
